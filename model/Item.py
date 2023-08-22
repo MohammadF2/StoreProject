@@ -1,8 +1,4 @@
 class Item:
-    barcode = ""
-    name = ""
-    price = 0.0
-    quantity = 0
 
     def __init__(self, barcode, name, price, quantity):
         self.barcode = barcode
