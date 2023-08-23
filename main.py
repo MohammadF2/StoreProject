@@ -168,7 +168,6 @@ def main():
             print("Do you want to checkout? (y/n): ")
             checkout = input()
             if checkout == 'y':
-                #TODO: checkout
                 order_no = check_out_cart(cart.cart_id, total, discount, customer.customer_id)
                 print("Your order number is: " + str(order_no))
                 print("Thank you for shopping with us")
