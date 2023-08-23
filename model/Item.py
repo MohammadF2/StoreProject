@@ -7,10 +7,10 @@ class Item:
         self.quantity = quantity
 
     def __str__(self):
+        if self.quantity == 0:
+            return self.name + ", price: " + str(self.price) + ", quantity: out of stock"
         return self.name + ", price: " + str(self.price) + ", quantity: " + str(self.quantity)
 
-    def __repr__(self):
-        return self.barcode + " " + self.name + " " + str(self.price) + " " + str(self.quantity)
 
     def __eq__(self, other):
         return self.barcode == other.barcode
