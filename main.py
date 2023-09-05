@@ -18,11 +18,19 @@ def print_menu():
     print("7. Exit")
 
 
+def take_input():
+    while True:
+        try:
+            choice = int(input())
+            return choice
+        except ValueError:
+            print("Please enter a valid number")
+
+
 def main():
     print("Welcome to the shopping cart program, please enter your phone number to continue or -1 to create new user: ")
-    customer_phone = int(input())
 
-    customer = None
+    customer_phone = take_input()
 
     if customer_phone == -1:
         print("Please enter your name: ")
@@ -45,7 +53,8 @@ def main():
     print("Welcome " + customer.name + " please select an option: ")
     print(customer.customer_id)
     print_menu()
-    choice = int(input())
+
+    choice = take_input()
 
     items = get_all_items()
 
@@ -58,23 +67,23 @@ def main():
                 print(str(count + 1) + " - " + item.__str__())
                 count += 1
             print("Please enter the item barcode or -1 to cancel: ")
-            item_barcode = int(input())
+            item_barcode = take_input()
             if item_barcode == -1:
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             if items[item_barcode - 1].quantity == 0:
                 print("This item is out of stock")
                 continue
             print("Please enter the quantity: ")
-            quantity = int(input())
+            quantity = take_input()
 
             while quantity <= 0:
                 print("Please enter a valid quantity: ")
-                quantity = int(input())
+                quantity = take_input()
             while quantity > items[item_barcode - 1].quantity:
                 print(f'We only have {items[item_barcode - 1].quantity} of this item, please enter a valid quantity: ')
-                quantity = int(input())
+                quantity = take_input()
             add_item_to_cart(cart.cart_id, items[item_barcode - 1].barcode, quantity)
             update_item_quantity(items[item_barcode - 1].barcode, quantity)
             items[item_barcode - 1].quantity -= quantity
@@ -87,10 +96,10 @@ def main():
                 print(str(count + 1) + " - " + item.__str__())
                 count += 1
             print("Please enter the item barcode or -1 to cancel: ")
-            item_barcode = int(input())
+            item_barcode = take_input()
             if item_barcode == -1:
                 print_menu()
-                choice = int(input())
+                choice = take_input()
             if item_barcode > len(items_cart) or item_barcode < 0:
                 print("Invalid item")
                 continue
@@ -106,22 +115,22 @@ def main():
             if items_cart is None:
                 print("You have no items in your cart")
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             for item in items_cart:
                 print(str(count + 1) + " - " + item.__str__())
                 count += 1
             print("Please enter the item barcode or -1 to cancel: ")
-            item_barcode = int(input())
+            item_barcode = take_input()
             if item_barcode == -1:
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             print("Please enter the quantity: ")
-            quantity = int(input())
+            quantity = take_input()
             while quantity < 0:
                 print("Please enter a valid quantity: ")
-                quantity = int(input())
+                quantity = take_input()
             if quantity == 0:
                 print("You selected to remove the item")
                 remove_item_from_cart(cart.cart_id, items_cart[item_barcode - 1].barcode)
@@ -129,24 +138,26 @@ def main():
                 items[item_barcode - 1].quantity += items_cart[item_barcode - 1].quantity
                 items_cart.pop(item_barcode - 1)
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             while quantity > (items[item_barcode - 1].quantity + items_cart[item_barcode - 1].quantity):
                 print(f'We only have {items[item_barcode - 1].quantity} of this item, please enter a valid quantity ('
                       f'Or enter -1 to cancel): ')
-                quantity = int(input())
+                quantity = take_input()
                 if quantity == -1:
                     print_menu()
-                    choice = int(input())
+                    choice = take_input()
                     continue
             if quantity < items_cart[item_barcode - 1].quantity:
                 print("You selected to remove some quantity of the item")
                 update_item_quantity_add(items[item_barcode - 1].barcode, quantity)
-                update_cart_item_quantity_remove(cart_id=cart.cart_id, item_barcode=items[item_barcode - 1].barcode, quantity=quantity)
+                update_cart_item_quantity_remove(cart_id=cart.cart_id, item_barcode=items[item_barcode - 1].barcode,
+                                                 quantity=quantity)
                 items[item_barcode - 1].quantity += quantity
             elif quantity > items_cart[item_barcode - 1].quantity:
                 print("You selected to add some quantity of the item")
-                update_cart_item_quantity_add(cart_id=cart.cart_id, item_barcode=items[item_barcode - 1].barcode, quantity=quantity)
+                update_cart_item_quantity_add(cart_id=cart.cart_id, item_barcode=items[item_barcode - 1].barcode,
+                                              quantity=quantity)
                 update_item_quantity(items[item_barcode - 1].barcode, quantity)
                 items[item_barcode - 1].quantity -= quantity
         elif choice == 4:
@@ -156,7 +167,7 @@ def main():
             if cart_items is None:
                 print("You have no items in your cart")
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             for cart_item in cart_items:
                 print(cart_item)
@@ -166,7 +177,7 @@ def main():
             if len(cart_items) == 0:
                 print("You have no items in your cart")
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
             total = 0
             for cart_item in cart_items:
@@ -176,10 +187,10 @@ def main():
             discount = input()
             if discount == 'y':
                 print("Please enter the discount percentage: ")
-                discount = int(input())
+                discount = take_input()
                 while discount > 100 or discount < 0:
                     print("Please enter a valid discount percentage: ")
-                    discount = int(input())
+                    discount = take_input()
                 total = total - (total * (discount / 100))
             print("total after discount: " + str(total))
             print("Do you want to checkout? (y/n): ")
@@ -191,7 +202,7 @@ def main():
                 pass
             else:
                 print_menu()
-                choice = int(input())
+                choice = take_input()
                 continue
         elif choice == 6:
             print("You selected the option to show orders")
@@ -200,12 +211,13 @@ def main():
                 print("You have no orders")
             else:
                 for order in orders:
-                    print("Order number: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(order.discount))
+                    print("Order number: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(
+                        order.discount))
                 print("Please enter the order number to show its items (If you dont want enter -1): ")
-                order_no = int(input())
+                order_no = take_input()
                 if order_no == -1:
                     print_menu()
-                    choice = int(input())
+                    choice = take_input()
                     continue
                 for order in orders:
                     if order.order_no == order_no:
@@ -213,8 +225,10 @@ def main():
                         for cart_item in cart_items:
                             item = get_item_data(cart_item.barcode)
                             print(item.name + ", price:" + str(item.price) + ", quantity:" + str(cart_item.quantity))
-                        print("order_No: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(order.discount) +
-                              "%" + " Total after discount " + str(order.total - (order.total * (order.discount / 100))))
+                        print("order_No: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(
+                            order.discount) +
+                              "%" + " Total after discount " + str(
+                            order.total - (order.total * (order.discount / 100))))
                         break
         elif choice == 7:
             close_session()
@@ -222,7 +236,8 @@ def main():
         else:
             print("Invalid option")
         print_menu()
-        choice = int(input())
+
+        choice = take_input()
 
 
 if __name__ == '__main__':

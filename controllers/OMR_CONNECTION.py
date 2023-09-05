@@ -41,7 +41,8 @@ def get_customer_orders(customer_id):
 
 
 def get_customer_carts(customer_id):
-    cart = session.query(controllers.Sql_Class.Cart).filter(controllers.Sql_Class.Cart.customer_id == customer_id).first()
+    cart = session.query(controllers.Sql_Class.Cart).filter(
+        controllers.Sql_Class.Cart.customer_id == customer_id).first()
     if cart:
         return Cart(cart_id=cart.cart_id, customer_id=cart.customer_id, items=get_all_cart_items(cart.cart_id))
     return []
@@ -55,7 +56,8 @@ def create_customer(name, phone):
 
 
 def get_or_create_customer_cart(customer_id):
-    cart = session.query(controllers.Sql_Class.Cart).filter(controllers.Sql_Class.Cart.customer_id == customer_id).first()
+    cart = session.query(controllers.Sql_Class.Cart).filter(
+        controllers.Sql_Class.Cart.customer_id == customer_id).first()
     if cart:
         return Cart(cart.cart_id, cart.customer_id, get_all_cart_items(cart.cart_id))
     else:
@@ -89,7 +91,6 @@ def get_all_items():
         item = Item(row.barcode, row.name, row.price, row.quantity_storage)
         items.append(item)
     return items
-
 
 
 def add_item_to_cart(cart_id, item_barcode, quantity):
@@ -135,10 +136,12 @@ def update_item_quantity_add(item_barcode, quantity):
 
 
 def get_orders(customer_id):
-    orders = session.query(controllers.Sql_Class.Order).filter(controllers.Sql_Class.Order.customer_id == customer_id).all()
+    orders = session.query(controllers.Sql_Class.Order).filter(
+        controllers.Sql_Class.Order.customer_id == customer_id).all()
     orders_arr = []
     for order in orders:
-        orders_arr.append(Order(order.order_No, date.today(), order.customer_id, order.cart_id, order.total, order.discount))
+        orders_arr.append(
+            Order(order.order_No, date.today(), order.customer_id, order.cart_id, order.total, order.discount))
     return orders_arr
 
 
@@ -148,7 +151,8 @@ def get_item_by_barcode(barcode):
 
 
 def get_all_cart_items(cart_id):
-    results = session.query(controllers.Sql_Class.CartItem).filter(controllers.Sql_Class.CartItem.cart_id == cart_id).all()
+    results = session.query(controllers.Sql_Class.CartItem).filter(
+        controllers.Sql_Class.CartItem.cart_id == cart_id).all()
     items = []
     for row in results:
         item = get_item_by_barcode(row.item_barcode)
@@ -167,10 +171,13 @@ def remove_item_from_cart(cart_id, item_barcode):
 
 
 def get_item_data(item_barcode):
-    item = session.query(controllers.Sql_Class.Item).filter(controllers.Sql_Class.Item.barcode == item_barcode).first()
-    if item:
-        return Item(item.barcode, item.name, item.price, item.quantity_storage)
-    return None
+    try:
+        item = session.query(controllers.Sql_Class.Item).filter(
+            controllers.Sql_Class.Item.barcode == item_barcode).first()
+        if item:
+            return Item(item.barcode, item.name, item.price, item.quantity_storage)
+    except:
+        return None
 
 
 def insert_order(cart_id, customer_id, total, discount):
@@ -195,6 +202,7 @@ def check_out_cart(cart_id, total, discount, customer_id):
         session.commit()
     # insert order
     return insert_order(cart_id, customer_id, total, discount)
+
 
 def close_session():
     session.close()
