@@ -62,7 +62,7 @@ def get_customer_carts(customer_id):
     if result:
         cart_id, customer_id = result[0]
         return Cart(cart_id=cart_id, customer_id=customer_id, items=[])
-    else :
+    else:
         cursor.execute("INSERT INTO cart ( customer_id) VALUES ( %s)", (customer_id,))
         mydb.commit()
         cursor.execute("SELECT cart_id, customer_id FROM cart WHERE customer_id = %s", (customer_id,))
@@ -133,6 +133,13 @@ def update_item_quantity(item_barcode, quantity):
     mydb.commit()
 
 
+def update_item_quantity_add(item_barcode, quantity):
+    cursor = mydb.cursor()
+    cursor.execute("UPDATE item SET quantity_storage = quantity_storage + %s WHERE barcode = %s",
+                   (quantity, item_barcode))
+    mydb.commit()
+
+
 def update_cart_item_quantity_remove(cart_id, item_barcode, quantity):
     cursor = mydb.cursor()
     cursor.execute("UPDATE cart_item SET quantity = quantity - %s WHERE cart_id = %s AND item_barcode = %s",
@@ -144,13 +151,6 @@ def update_cart_item_quantity_add(cart_id, item_barcode, quantity):
     cursor = mydb.cursor()
     cursor.execute("UPDATE cart_item SET quantity = quantity + %s WHERE cart_id = %s AND item_barcode = %s",
                    (quantity, cart_id, item_barcode))
-    mydb.commit()
-
-
-def update_item_quantity_add(item_barcode, quantity):
-    cursor = mydb.cursor()
-    cursor.execute("UPDATE item SET quantity_storage = quantity_storage + %s WHERE barcode = %s",
-                   (quantity, item_barcode))
     mydb.commit()
 
 
@@ -187,6 +187,7 @@ def check_out_cart(cart_id, total, discount, customer_id):
     mydb.commit()
     # insert order
     return insert_order(cart_id, customer_id, total, discount)
+
 
 def get_item_data(barcode):
     cursor = mydb.cursor()

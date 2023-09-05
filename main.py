@@ -1,8 +1,9 @@
-from controllers.database_connceter import create_customer, get_customer_by_phone, create_cart, get_customer_carts, \
-    get_last_added_cart, get_all_items, add_item_to_cart, get_orders, update_item_quantity, get_all_cart_items, \
+from controllers.OMR_CONNECTION import create_customer, get_customer_by_phone, create_cart, get_customer_carts, \
+    get_all_items, add_item_to_cart, get_orders, update_item_quantity, get_all_cart_items, \
     remove_item_from_cart, update_item_quantity_add, update_cart_item_quantity_remove, update_cart_item_quantity_add, \
-    check_out_cart, get_item_data
+    check_out_cart, get_item_data, get_or_create_customer_cart, close_session
 from model.Cart import Cart
+
 from model.Customer import Customer
 
 
@@ -28,6 +29,10 @@ def main():
         name = input()
         print("Please enter your phone number: ")
         phone = input()
+        customer_dup = get_customer_by_phone(phone)
+        if customer_dup is not None:
+            print("Customer already exists")
+            return
         id = create_customer(name, phone)
         customer = Customer(id, phone, name)
         create_cart(customer.customer_id)
@@ -38,19 +43,20 @@ def main():
             return
 
     print("Welcome " + customer.name + " please select an option: ")
+    print(customer.customer_id)
     print_menu()
     choice = int(input())
-
-    cart = get_customer_carts(customer.customer_id)
 
     items = get_all_items()
 
     while choice != 7:
+        cart = get_or_create_customer_cart(customer.customer_id)
         if choice == 1:
             print("Please select an item (enter its number): ")
             count = 0
             for item in items:
                 print(str(count + 1) + " - " + item.__str__())
+                count += 1
             print("Please enter the item barcode or -1 to cancel: ")
             item_barcode = int(input())
             if item_barcode == -1:
@@ -97,6 +103,11 @@ def main():
             items_cart = get_all_cart_items(cart.cart_id)
             print("Please select an item (enter its number): ")
             count = 0
+            if items_cart is None:
+                print("You have no items in your cart")
+                print_menu()
+                choice = int(input())
+                continue
             for item in items_cart:
                 print(str(count + 1) + " - " + item.__str__())
                 count += 1
@@ -140,7 +151,13 @@ def main():
                 items[item_barcode - 1].quantity -= quantity
         elif choice == 4:
             print("You selected the option to show cart")
+            print("cart id: " + str(cart.cart_id))
             cart_items = get_all_cart_items(cart.cart_id)
+            if cart_items is None:
+                print("You have no items in your cart")
+                print_menu()
+                choice = int(input())
+                continue
             for cart_item in cart_items:
                 print(cart_item)
         elif choice == 5:
@@ -183,8 +200,7 @@ def main():
                 print("You have no orders")
             else:
                 for order in orders:
-                    order_no, customer_id, cart_id, discount, total = order
-                    print("Order number: " + str(order_no) + " Total: " + str(total) + " Discount: " + str(discount))
+                    print("Order number: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(order.discount))
                 print("Please enter the order number to show its items (If you dont want enter -1): ")
                 order_no = int(input())
                 if order_no == -1:
@@ -192,15 +208,16 @@ def main():
                     choice = int(input())
                     continue
                 for order in orders:
-                    if order[0] == order_no:
-                        order_no, customer_id, cart_id, discount, total = order
-                        cart_items = get_all_cart_items(cart_id)
+                    if order.order_no == order_no:
+                        cart_items = get_all_cart_items(order.cart_id)
                         for cart_item in cart_items:
                             item = get_item_data(cart_item.barcode)
                             print(item.name + ", price:" + str(item.price) + ", quantity:" + str(cart_item.quantity))
-                        print("order_No: " + str(order_no) + " Total: " + str(total) + " Discount: " + str(discount))
+                        print("order_No: " + str(order.order_no) + " Total: " + str(order.total) + " Discount: " + str(order.discount) +
+                              "%" + " Total after discount " + str(order.total - (order.total * (order.discount / 100))))
                         break
         elif choice == 7:
+            close_session()
             print("You selected the option to exit")
         else:
             print("Invalid option")

@@ -11,6 +11,5 @@ class Item:
             return self.name + ", price: " + str(self.price) + ", quantity: out of stock"
         return self.name + ", price: " + str(self.price) + ", quantity: " + str(self.quantity)
 
-
     def __eq__(self, other):
         return self.barcode == other.barcode
