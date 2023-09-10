@@ -19,9 +19,6 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Create a base class for declarative models
-Base = declarative_base()
-
 
 def get_all_customers():
     customers = session.query(Customer).all()
@@ -51,7 +48,10 @@ def get_customer_carts(customer_id):
 def create_customer(name, phone):
     new_customer = controllers.Sql_Class.Customer(name=name, phone=phone)
     session.add(new_customer)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     return new_customer.id
 
 
@@ -64,7 +64,10 @@ def get_or_create_customer_cart(customer_id):
         # Create a new cart for the customer
         new_cart = controllers.Sql_Class.Cart(customer_id=customer_id)
         session.add(new_cart)
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
         return Cart(new_cart.cart_id, new_cart.customer_id, [])
 
 
@@ -73,7 +76,10 @@ def create_cart(customer_id):
     if customer:
         new_cart = Cart(customer_id=customer_id)
         session.add(new_cart)
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def get_customer_by_phone(phone):
@@ -98,7 +104,10 @@ def add_item_to_cart(cart_id, item_barcode, quantity):
                                                                     controllers.Sql_Class.CartItem.item_barcode == item_barcode).first()
     if contains:
         contains.quantity += quantity
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
         return
     cart_item = CartItem(cart_id=cart_id, item_barcode=item_barcode, quantity=quantity)
     session.add(cart_item)
@@ -109,7 +118,10 @@ def update_item_quantity(item_barcode, quantity):
     item = session.query(controllers.Sql_Class.Item).filter(controllers.Sql_Class.Item.barcode == item_barcode).first()
     if item:
         item.quantity_storage -= quantity
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def update_cart_item_quantity_remove(cart_id, item_barcode, quantity):
@@ -117,7 +129,10 @@ def update_cart_item_quantity_remove(cart_id, item_barcode, quantity):
                                                CartItem.item_barcode == item_barcode).first()
     if cart_item:
         cart_item.quantity -= quantity
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def update_cart_item_quantity_add(cart_id, item_barcode, quantity):
@@ -125,14 +140,20 @@ def update_cart_item_quantity_add(cart_id, item_barcode, quantity):
                                                CartItem.item_barcode == item_barcode).first()
     if cart_item:
         cart_item.quantity += quantity
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def update_item_quantity_add(item_barcode, quantity):
     item = session.query(controllers.Sql_Class.Item).filter(controllers.Sql_Class.Item.barcode == item_barcode).first()
     if item:
         item.quantity_storage += quantity
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def get_orders(customer_id):
@@ -167,7 +188,10 @@ def remove_item_from_cart(cart_id, item_barcode):
                                                CartItem.item_barcode == item_barcode).first()
     if cart_item:
         session.delete(cart_item)
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
 
 
 def get_item_data(item_barcode):
@@ -183,7 +207,10 @@ def get_item_data(item_barcode):
 def insert_order(cart_id, customer_id, total, discount):
     new_order = controllers.Sql_Class.Order(cart_id=cart_id, customer_id=customer_id, total=total, discount=discount)
     session.add(new_order)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     return get_max_order_no()
 
 
@@ -199,10 +226,16 @@ def check_out_cart(cart_id, total, discount, customer_id):
     cart = session.query(controllers.Sql_Class.Cart).filter(controllers.Sql_Class.Cart.cart_id == cart_id).first()
     if cart:
         cart.customer_id = 1
-        session.commit()
+        try:
+            session.commit()
+        except:
+            session.rollback()
     # insert order
     return insert_order(cart_id, customer_id, total, discount)
 
 
 def close_session():
-    session.close()
+    try:
+        session.close()
+    except:
+        print("error closing session")

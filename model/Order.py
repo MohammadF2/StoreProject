@@ -11,3 +11,4 @@ class Order:
     def __str__(self):
         return str(self.order_no) + " " + str(self.date) + " " + str(self.customer_id) + " " + str(
             self.cart_id) + " " + str(self.total) + " " + str(self.discount)
+

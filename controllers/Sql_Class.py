@@ -52,7 +52,6 @@ class CartItem(Base):
     # Define the many-to-one relationships with Item and Cart
 
 
-
 class Order(Base):
     __tablename__ = 'orders'
 
