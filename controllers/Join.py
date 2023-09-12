@@ -30,5 +30,7 @@ query = query.order_by(customer_alias.id, order_alias.order_No, cart_item_alias.
 results = query.all()
 
 
+print("Customer ID | Customer Name | Order Number | Item Quantity | Item Name | Item Price")
+
 for result in results:
     print(result)

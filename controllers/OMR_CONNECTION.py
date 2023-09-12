@@ -51,6 +51,7 @@ def create_customer(name, phone):
     try:
         session.commit()
     except:
+        print("error creating customer")
         session.rollback()
     return new_customer.id
 
@@ -67,6 +68,7 @@ def get_or_create_customer_cart(customer_id):
         try:
             session.commit()
         except:
+            print("error creating cart")
             session.rollback()
         return Cart(new_cart.cart_id, new_cart.customer_id, [])
 
@@ -79,6 +81,7 @@ def create_cart(customer_id):
         try:
             session.commit()
         except:
+            print("error creating cart")
             session.rollback()
 
 
@@ -107,11 +110,16 @@ def add_item_to_cart(cart_id, item_barcode, quantity):
         try:
             session.commit()
         except:
+            print("error adding item to cart")
             session.rollback()
         return
     cart_item = CartItem(cart_id=cart_id, item_barcode=item_barcode, quantity=quantity)
     session.add(cart_item)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        print("error adding item to cart")
+        session.rollback()
 
 
 def update_item_quantity(item_barcode, quantity):
@@ -122,6 +130,7 @@ def update_item_quantity(item_barcode, quantity):
             session.commit()
         except:
             session.rollback()
+            print("error updating item quantity")
 
 
 def update_cart_item_quantity_remove(cart_id, item_barcode, quantity):
@@ -133,6 +142,7 @@ def update_cart_item_quantity_remove(cart_id, item_barcode, quantity):
             session.commit()
         except:
             session.rollback()
+            print("error updating cart item quantity")
 
 
 def update_cart_item_quantity_add(cart_id, item_barcode, quantity):
@@ -143,6 +153,7 @@ def update_cart_item_quantity_add(cart_id, item_barcode, quantity):
         try:
             session.commit()
         except:
+            print("error updating cart item quantity")
             session.rollback()
 
 
@@ -153,6 +164,7 @@ def update_item_quantity_add(item_barcode, quantity):
         try:
             session.commit()
         except:
+            print("error updating item quantity")
             session.rollback()
 
 
@@ -191,6 +203,7 @@ def remove_item_from_cart(cart_id, item_barcode):
         try:
             session.commit()
         except:
+            print("error removing item from cart")
             session.rollback()
 
 
@@ -210,6 +223,7 @@ def insert_order(cart_id, customer_id, total, discount):
     try:
         session.commit()
     except:
+        print("error inserting order")
         session.rollback()
     return get_max_order_no()
 
@@ -229,6 +243,7 @@ def check_out_cart(cart_id, total, discount, customer_id):
         try:
             session.commit()
         except:
+            print("error checking out cart")
             session.rollback()
     # insert order
     return insert_order(cart_id, customer_id, total, discount)
