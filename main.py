@@ -1,10 +1,16 @@
-from controllers.OMR_CONNECTION import create_customer, get_customer_by_phone, create_cart, get_customer_carts, \
+from controllers.Database.ORM.OMR_CONNECTION import create_customer, get_customer_by_phone, create_cart, \
     get_all_items, add_item_to_cart, get_orders, update_item_quantity, get_all_cart_items, \
     remove_item_from_cart, update_item_quantity_add, update_cart_item_quantity_remove, update_cart_item_quantity_add, \
     check_out_cart, get_item_data, get_or_create_customer_cart, close_session
-from model.Cart import Cart
 
+from controllers.Validation import check_if_phone
 from model.Customer import Customer
+
+import logging
+
+# Configure the logger
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.DEBUG)  # set logger level
 
 
 def print_menu():
@@ -21,10 +27,13 @@ def print_menu():
 def take_input():
     while True:
         try:
-            choice = int(input())
-            return choice
+            phone_number = int(input())
+            if check_if_phone(phone_number):
+                return phone_number
+            logger.error("Please enter a valid phone number (10 digits), please try again: ")
         except ValueError:
-            print("Please enter a valid number")
+            logger.error("Wrong input only numbers are accepted, please try again: ")
+            continue
 
 
 def main():
@@ -232,9 +241,9 @@ def main():
                         break
         elif choice == 7:
             close_session()
-            print("You selected the option to exit")
+            print("Thank you for shopping with us")
         else:
-            print("Invalid option")
+            logger.error("Invalid choice")
         print_menu()
 
         choice = take_input()

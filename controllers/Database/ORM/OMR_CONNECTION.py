@@ -178,6 +178,13 @@ def get_orders(customer_id):
     return orders_arr
 
 
+def return_orders_as_json(orders):
+    orders_json = []
+    for order in orders:
+        orders_json.append(order.__dict__)
+    return orders_json
+
+
 def get_item_by_barcode(barcode):
     item = session.query(controllers.Sql_Class.Item).filter(controllers.Sql_Class.Item.barcode == barcode).first()
     return item

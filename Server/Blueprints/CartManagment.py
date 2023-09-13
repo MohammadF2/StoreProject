@@ -3,7 +3,7 @@ import json
 from flask import abort, blueprints
 import flask
 
-from controllers.OMR_CONNECTION import get_item_data, get_customer_by_phone, get_or_create_customer_cart, \
+from controllers.Database.ORM.OMR_CONNECTION import get_item_data, get_customer_by_phone, get_or_create_customer_cart, \
     update_item_quantity, add_item_to_cart, get_all_cart_items, remove_item_from_cart, update_item_quantity_add, \
     update_cart_item_quantity_remove, update_cart_item_quantity_add
 

@@ -29,7 +29,7 @@ def check_if_word(word):
 
 
 def check_if_phone(phone):
-    if len(phone) == 10:
+    if 9 <= len(str(phone)) < 11:
         return True
     else:
         return False

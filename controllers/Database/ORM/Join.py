@@ -1,7 +1,7 @@
 from sqlalchemy.orm import aliased
 
 
-from controllers.OMR_CONNECTION import session
+from controllers.Database.ORM.OMR_CONNECTION import session
 from controllers.Sql_Class import Item, CartItem, Cart, Order, Customer
 
 

@@ -2,7 +2,7 @@ from flask import blueprints
 import flask
 import json
 
-from controllers.OMR_CONNECTION import get_customer_by_phone, create_customer
+from controllers.Database.ORM.OMR_CONNECTION import get_customer_by_phone, create_customer
 
 CustomerManagement = blueprints.Blueprint('CustomerManagement', __name__)
 
