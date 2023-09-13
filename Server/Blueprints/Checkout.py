@@ -27,6 +27,3 @@ def checkout():
         total = total - (total * data['discount'] / 100)
     order_no = check_out_cart(cart.cart_id, total, data['discount'], customer.customer_id)
     return json.dumps({"Success": "The order has been checked out", "order_no": order_no})
-
-
-
